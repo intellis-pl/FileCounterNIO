@@ -32,8 +32,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
-            resultFiles.incAllFilesAmount();
-            resultFiles.incCurrentDirFilesAmount();
+            incrementFilesAmount();
             return FileVisitResult.CONTINUE;
         }
         return FileVisitResult.SKIP_SUBTREE;
@@ -48,14 +47,23 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
         String dirName = currentFile.getFileName().toString();
-        resultFiles.addFilesAmountForCurrentDir(
-                new DirectoryFilesAmountDTO(dirName, resultFiles.getCurrentDirFilesAmount())
-        );
-        resultFiles = resetCurrentDirFilesAmount(resultFiles);
+        saveFilesAmountForCurrentDirectory(dirName);
         return FileVisitResult.CONTINUE;
     }
 
     public ResultFilesDTO getResultFiles() {
         return resultFiles;
+    }
+
+    private void incrementFilesAmount() {
+        resultFiles.incAllFilesAmount();
+        resultFiles.incCurrentDirFilesAmount();
+    }
+
+    private void saveFilesAmountForCurrentDirectory(String dirName) {
+        resultFiles.addFilesAmountForCurrentDir(
+                new DirectoryFilesAmountDTO(dirName, resultFiles.getCurrentDirFilesAmount())
+        );
+        resultFiles = resetCurrentDirFilesAmount(resultFiles);
     }
 }
