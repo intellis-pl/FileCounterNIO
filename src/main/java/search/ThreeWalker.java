@@ -11,8 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 
-import static main.java.helpers.ResultFilesHelper.isMatchFile;
-import static main.java.helpers.ResultFilesHelper.resetCurrentDirFilesAmount;
+import static main.java.helpers.ResultFilesHelper.*;
 
 
 public class ThreeWalker implements FileVisitor<Path> {
@@ -43,7 +42,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         LOGGER.error(exc.getMessage());
-        return FileVisitResult.CONTINUE;
+        return FileVisitResult.TERMINATE;
     }
 
     @Override
@@ -52,6 +51,7 @@ public class ThreeWalker implements FileVisitor<Path> {
         resultFiles.addFilesAmountForCurrentDir(
                 new DirectoryFilesAmountDTO(dirName, resultFiles.getCurrentDirFilesAmount())
         );
+        resultFiles = resetCurrentDirFilesAmount(resultFiles);
         return FileVisitResult.CONTINUE;
     }
 
