@@ -2,6 +2,7 @@ package main.java.search;
 
 import main.java.dto.DirectoryFilesAmountDTO;
 import main.java.dto.ResultFilesDTO;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -15,6 +16,8 @@ import static main.java.helpers.ResultFilesHelper.resetCurrentDirFilesAmount;
 
 
 public class ThreeWalker implements FileVisitor<Path> {
+    private final static Logger LOGGER = Logger.getLogger(ThreeWalker.class);
+
     private ResultFilesDTO resultFiles;
 
     {
@@ -39,6 +42,7 @@ public class ThreeWalker implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+        LOGGER.error(exc.getMessage());
         return FileVisitResult.CONTINUE;
     }
 
