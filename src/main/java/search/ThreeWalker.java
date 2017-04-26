@@ -13,8 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static main.java.helpers.ResultFilesHelper.isMatchFile;
-import static main.java.helpers.ResultFilesHelper.resetCurrentDirFilesAmount;
+import static main.java.helpers.ResultFilesHelper.*;
 
 
 public class ThreeWalker implements FileVisitor<Path> {
@@ -37,8 +36,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
-            String dirName = currentFile.getParent().getFileName().toString();
-            incrementFilesAmount();
+            String dirName = findCatalogName(currentFile.getParent());
+            resultFiles = incrementFilesAmount(resultFiles);
             saveTemporaryFilesAmountForCurrentDirectory(dirName);
         }
         return FileVisitResult.CONTINUE;
@@ -52,7 +51,7 @@ public class ThreeWalker implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
-        String dirName = currentFile.getFileName().toString();
+        String dirName = findCatalogName(currentFile);
         saveFilesAmountForCurrentDirectory(dirName);
         return FileVisitResult.CONTINUE;
     }
@@ -61,9 +60,8 @@ public class ThreeWalker implements FileVisitor<Path> {
         return resultFiles;
     }
 
-    private void incrementFilesAmount() {
-        resultFiles.incAllFilesAmount();
-        resultFiles.incCurrentDirFilesAmount();
+    private String findCatalogName(Path currentFile) {
+        return currentFile.getFileName().toString();
     }
 
     private void saveTemporaryFilesAmountForCurrentDirectory(String dirName) {

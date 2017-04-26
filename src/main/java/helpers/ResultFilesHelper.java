@@ -20,6 +20,12 @@ public final class ResultFilesHelper {
         return resultFiles;
     }
 
+    public static ResultFilesDTO incrementFilesAmount(ResultFilesDTO resultFiles) {
+        resultFiles.incAllFilesAmount();
+        resultFiles.incCurrentDirFilesAmount();
+        return resultFiles;
+    }
+
     public static Boolean isMatchFile(Path file) {
         return MATCHER.matches(file);
     }
