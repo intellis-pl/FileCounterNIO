@@ -24,7 +24,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     private Map<String, Integer> resultFilesMap;
 
     {
-        resultFiles = new ResultFilesDTO(0, new ArrayList<DirectoryFilesAmountDTO>());
+        resultFiles = new ResultFilesDTO(0, new ArrayList<>());
         resultFilesMap = new HashMap<>();
     }
 
