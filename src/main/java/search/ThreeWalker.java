@@ -33,9 +33,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
             incrementFilesAmount();
-            return FileVisitResult.CONTINUE;
         }
-        return FileVisitResult.SKIP_SUBTREE;
+        return FileVisitResult.CONTINUE;
     }
 
     @Override
