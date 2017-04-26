@@ -9,8 +9,8 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import static main.java.helpers.ResultFilesHelper.isMatchFile;
@@ -21,11 +21,11 @@ public class ThreeWalker implements FileVisitor<Path> {
     private final static Logger LOGGER = Logger.getLogger(ThreeWalker.class);
 
     private ResultFilesDTO resultFiles;
-    private Map<String, Integer> resultFilesMap;
+    private Map<String, Integer> tempResultFilesMap;
 
     {
-        resultFiles = new ResultFilesDTO(0, new ArrayList<>());
-        resultFilesMap = new HashMap<>();
+        resultFiles = new ResultFilesDTO(0, new LinkedList<>());
+        tempResultFilesMap = new LinkedHashMap<>();
     }
 
     @Override
@@ -38,7 +38,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
             String dirName = currentFile.getParent().getFileName().toString();
-            incrementFilesAmount(dirName);
+            incrementFilesAmount();
+            saveTemporaryFilesAmountForCurrentDirectory(dirName);
         }
         return FileVisitResult.CONTINUE;
     }
@@ -60,10 +61,14 @@ public class ThreeWalker implements FileVisitor<Path> {
         return resultFiles;
     }
 
-    private void incrementFilesAmount(String dirName) {
+    private void incrementFilesAmount() {
         resultFiles.incAllFilesAmount();
-        resultFilesMap.put(
-                dirName, resultFiles.incCurrentDirFilesAmount());
+        resultFiles.incCurrentDirFilesAmount();
+    }
+
+    private void saveTemporaryFilesAmountForCurrentDirectory(String dirName) {
+        tempResultFilesMap.put(
+                dirName, resultFiles.getCurrentDirFilesAmount());
     }
 
     private void saveFilesAmountForCurrentDirectory(String dirName) {
@@ -75,8 +80,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     }
 
     private Integer findFilesAmountInCurrentDir(String dirName) {
-        if(resultFilesMap.get(dirName) != null) {
-            return resultFilesMap.get(dirName);
+        if(tempResultFilesMap.get(dirName) != null) {
+            return tempResultFilesMap.get(dirName);
         }
         return resultFiles.getCurrentDirFilesAmount();
     }
