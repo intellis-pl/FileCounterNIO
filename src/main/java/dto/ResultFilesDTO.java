@@ -32,8 +32,8 @@ public class ResultFilesDTO {
         this.allFilesAmount++;
     }
 
-    public void incCurrentDirFilesAmount() {
-        this.currentDirFilesAmount++;
+    public Integer incCurrentDirFilesAmount() {
+        return ++this.currentDirFilesAmount;
     }
 
     public void addFilesAmountForCurrentDir(DirectoryFilesAmountDTO fileCount) {

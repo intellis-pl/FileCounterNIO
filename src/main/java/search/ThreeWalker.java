@@ -10,17 +10,22 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-import static main.java.helpers.ResultFilesHelper.*;
+import static main.java.helpers.ResultFilesHelper.isMatchFile;
+import static main.java.helpers.ResultFilesHelper.resetCurrentDirFilesAmount;
 
 
 public class ThreeWalker implements FileVisitor<Path> {
     private final static Logger LOGGER = Logger.getLogger(ThreeWalker.class);
 
     private ResultFilesDTO resultFiles;
+    private Map<String, Integer> resultFilesMap;
 
     {
-        resultFiles = new ResultFilesDTO(0, new ArrayList<>());
+        resultFiles = new ResultFilesDTO(0, new ArrayList<DirectoryFilesAmountDTO>());
+        resultFilesMap = new HashMap<>();
     }
 
     @Override
@@ -32,7 +37,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
-            incrementFilesAmount();
+            String dirName = currentFile.getParent().getFileName().toString();
+            incrementFilesAmount(dirName);
         }
         return FileVisitResult.CONTINUE;
     }
@@ -54,15 +60,24 @@ public class ThreeWalker implements FileVisitor<Path> {
         return resultFiles;
     }
 
-    private void incrementFilesAmount() {
+    private void incrementFilesAmount(String dirName) {
         resultFiles.incAllFilesAmount();
-        resultFiles.incCurrentDirFilesAmount();
+        resultFilesMap.put(
+                dirName, resultFiles.incCurrentDirFilesAmount());
     }
 
     private void saveFilesAmountForCurrentDirectory(String dirName) {
+        Integer filesInCurrDir = findFilesAmountInCurrentDir(dirName);
         resultFiles.addFilesAmountForCurrentDir(
-                new DirectoryFilesAmountDTO(dirName, resultFiles.getCurrentDirFilesAmount())
+                new DirectoryFilesAmountDTO(dirName, filesInCurrDir)
         );
         resultFiles = resetCurrentDirFilesAmount(resultFiles);
+    }
+
+    private Integer findFilesAmountInCurrentDir(String dirName) {
+        if(resultFilesMap.get(dirName) != null) {
+            return resultFilesMap.get(dirName);
+        }
+        return resultFiles.getCurrentDirFilesAmount();
     }
 }
