@@ -31,7 +31,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         String dirName = findCatalogName(dir);
-        tempResultFilesMap = initTempFilesMapForCurrentDir(tempResultFilesMap, dirName);
+        tempResultFilesMap = initTempDirectory(tempResultFilesMap, dirName);
         resultFiles = resetCurrentDirFilesAmount(resultFiles);
         return FileVisitResult.CONTINUE;
     }
@@ -55,7 +55,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
         String dirName = findCatalogName(currentFile);
         saveFilesAmountForCurrentDirectory(dirName);
-        tempResultFilesMap = clearTempResultFilesMap(tempResultFilesMap, dirName);
+        tempResultFilesMap = clearTempDirectory(tempResultFilesMap, dirName);
         return FileVisitResult.CONTINUE;
     }
 
