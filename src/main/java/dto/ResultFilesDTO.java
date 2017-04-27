@@ -4,7 +4,6 @@ import java.util.List;
 
 public class ResultFilesDTO {
     private Integer allFilesAmount;
-    private Integer currentDirFilesAmount;
     private List<DirectoryFilesAmountDTO> filesAmountPerDirectoryBranch;
 
     public ResultFilesDTO(Integer allFilesAmount, List<DirectoryFilesAmountDTO> filesAmountPerDirectoryBranch) {
@@ -20,16 +19,8 @@ public class ResultFilesDTO {
         return allFilesAmount;
     }
 
-    public void setCurrentDirFilesAmount(Integer currentDirFilesAmount) {
-        this.currentDirFilesAmount = currentDirFilesAmount;
-    }
-
-    public void incAllFilesAmount() {
-        this.allFilesAmount++;
-    }
-
-    public void incCurrentDirFilesAmount() {
-        this.currentDirFilesAmount++;
+    public void setAllFilesAmount(Integer allFilesAmount) {
+        this.allFilesAmount = allFilesAmount;
     }
 
     public void addFilesAmountForCurrentDir(DirectoryFilesAmountDTO fileCount) {

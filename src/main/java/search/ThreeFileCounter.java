@@ -2,6 +2,7 @@ package main.java.search;
 
 import main.java.dto.DirectoryFilesAmountDTO;
 import main.java.dto.ResultFilesDTO;
+import main.java.helpers.FileMatcher;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -13,33 +14,37 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import static main.java.helpers.ResultFilesHelper.*;
 import static main.java.helpers.TemporaryResultFilesHelper.*;
 
 
-public class ThreeWalker implements FileVisitor<Path> {
-    private final static Logger LOGGER = Logger.getLogger(ThreeWalker.class);
+public class ThreeFileCounter implements FileVisitor<Path> {
+    private final static Logger LOGGER = Logger.getLogger(ThreeFileCounter.class);
 
+    private Integer allFilesAmount;
+    private Integer currentDirFilesAmount;
     private ResultFilesDTO resultFiles;
     private Map<String, Integer> tempResultFilesMap;
 
     {
         resultFiles = new ResultFilesDTO(0, new LinkedList<>());
         tempResultFilesMap = new LinkedHashMap<>();
+        allFilesAmount = 0;
+        currentDirFilesAmount = 0;
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         String dirName = findCatalogName(dir);
         tempResultFilesMap = initTempDirectory(tempResultFilesMap, dirName);
-        resultFiles = resetCurrentDirFilesAmount(resultFiles);
+        resetCurrentDirFilesAmount();
         return FileVisitResult.CONTINUE;
     }
 
     @Override
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
-        if (isMatchFile(currentFile)) {
-            resultFiles = incrementFilesAmount(resultFiles);
+        if (FileMatcher.isFileMatch(currentFile)) {
+            incrementFilesAmount();
+            saveAllFilesAmount();
             tempResultFilesMap = updateFilesAmountForParents(tempResultFilesMap);
         }
         return FileVisitResult.CONTINUE;
@@ -72,7 +77,20 @@ public class ThreeWalker implements FileVisitor<Path> {
         resultFiles.addFilesAmountForCurrentDir(
                 new DirectoryFilesAmountDTO(dirName, filesInCurrDir)
         );
-        resultFiles = resetCurrentDirFilesAmount(resultFiles);
+        resetCurrentDirFilesAmount();
+    }
+
+    private void incrementFilesAmount() {
+        allFilesAmount++;
+        currentDirFilesAmount++;
+    }
+
+    private void saveAllFilesAmount() {
+        resultFiles.setAllFilesAmount(allFilesAmount);
+    }
+
+    private void resetCurrentDirFilesAmount() {
+        currentDirFilesAmount = 0;
     }
 
 }

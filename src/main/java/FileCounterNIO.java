@@ -2,7 +2,7 @@ package main.java;
 
 import main.java.dto.DirectoryFilesAmountDTO;
 import main.java.dto.ResultFilesDTO;
-import main.java.search.ThreeWalker;
+import main.java.search.ThreeFileCounter;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class FileCounterNIO {
         Path searchFile = Paths.get("./search_dir/A");
 
         try {
-            ThreeWalker search = new ThreeWalker();
+            ThreeFileCounter search = new ThreeFileCounter();
             Files.walkFileTree(searchFile, search);
 
             ResultFilesDTO resultFiles = search.getResultFiles();
