@@ -20,10 +20,6 @@ public class ResultFilesDTO {
         return allFilesAmount;
     }
 
-    public Integer getCurrentDirFilesAmount() {
-        return currentDirFilesAmount;
-    }
-
     public void setCurrentDirFilesAmount(Integer currentDirFilesAmount) {
         this.currentDirFilesAmount = currentDirFilesAmount;
     }

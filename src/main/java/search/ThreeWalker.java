@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import static main.java.helpers.ResultFilesHelper.*;
+import static main.java.helpers.TemporaryResultFilesHelper.*;
 
 
 public class ThreeWalker implements FileVisitor<Path> {
@@ -29,6 +30,8 @@ public class ThreeWalker implements FileVisitor<Path> {
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+        String dirName = findCatalogName(dir);
+        tempResultFilesMap = initTempFilesMapForCurrentDir(tempResultFilesMap, dirName);
         resultFiles = resetCurrentDirFilesAmount(resultFiles);
         return FileVisitResult.CONTINUE;
     }
@@ -36,9 +39,8 @@ public class ThreeWalker implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFile(Path currentFile, BasicFileAttributes attrs) throws IOException {
         if (isMatchFile(currentFile)) {
-            String dirName = findCatalogName(currentFile.getParent());
             resultFiles = incrementFilesAmount(resultFiles);
-            saveTemporaryFilesAmountForCurrentDirectory(dirName);
+            tempResultFilesMap = updateFilesAmountForParents(tempResultFilesMap);
         }
         return FileVisitResult.CONTINUE;
     }
@@ -53,6 +55,7 @@ public class ThreeWalker implements FileVisitor<Path> {
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
         String dirName = findCatalogName(currentFile);
         saveFilesAmountForCurrentDirectory(dirName);
+        tempResultFilesMap = clearTempResultFilesMap(tempResultFilesMap, dirName);
         return FileVisitResult.CONTINUE;
     }
 
@@ -64,23 +67,12 @@ public class ThreeWalker implements FileVisitor<Path> {
         return currentFile.getFileName().toString();
     }
 
-    private void saveTemporaryFilesAmountForCurrentDirectory(String dirName) {
-        tempResultFilesMap.put(
-                dirName, resultFiles.getCurrentDirFilesAmount());
-    }
-
     private void saveFilesAmountForCurrentDirectory(String dirName) {
-        Integer filesInCurrDir = findFilesAmountInCurrentDir(dirName);
+        Integer filesInCurrDir = tempResultFilesMap.get(dirName);
         resultFiles.addFilesAmountForCurrentDir(
                 new DirectoryFilesAmountDTO(dirName, filesInCurrDir)
         );
         resultFiles = resetCurrentDirFilesAmount(resultFiles);
     }
 
-    private Integer findFilesAmountInCurrentDir(String dirName) {
-        if(tempResultFilesMap.get(dirName) != null) {
-            return tempResultFilesMap.get(dirName);
-        }
-        return resultFiles.getCurrentDirFilesAmount();
-    }
 }
