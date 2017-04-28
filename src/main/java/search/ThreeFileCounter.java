@@ -35,7 +35,7 @@ public class ThreeFileCounter implements FileVisitor<Path> {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
         String dirName = findCatalogName(dir);
-        tempResultFilesMap = initTempDirectory(tempResultFilesMap, dirName);
+        tempResultFilesMap = registerTempDirectory(tempResultFilesMap, dirName);
         resetCurrentDirFilesAmount();
         return FileVisitResult.CONTINUE;
     }
@@ -60,7 +60,7 @@ public class ThreeFileCounter implements FileVisitor<Path> {
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
         String dirName = findCatalogName(currentFile);
         saveFilesAmountForCurrentDirectory(dirName);
-        tempResultFilesMap = clearTempDirectory(tempResultFilesMap, dirName);
+        tempResultFilesMap = unregisterTempDirectory(tempResultFilesMap, dirName);
         return FileVisitResult.CONTINUE;
     }
 

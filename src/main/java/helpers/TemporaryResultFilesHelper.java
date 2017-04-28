@@ -5,12 +5,12 @@ import java.util.Map;
 
 public class TemporaryResultFilesHelper {
 
-    public static Map<String, Integer> initTempDirectory(Map<String, Integer> tempResultFilesMap, String dirName) {
+    public static Map<String, Integer> registerTempDirectory(Map<String, Integer> tempResultFilesMap, String dirName) {
         tempResultFilesMap.put(dirName, 0);
         return tempResultFilesMap;
     }
 
-    public static Map<String, Integer> clearTempDirectory(Map<String, Integer> tempResultFilesMap, String dirName) {
+    public static Map<String, Integer> unregisterTempDirectory(Map<String, Integer> tempResultFilesMap, String dirName) {
         tempResultFilesMap.remove(dirName);
         return tempResultFilesMap;
     }
