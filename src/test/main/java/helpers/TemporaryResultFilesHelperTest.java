@@ -16,7 +16,7 @@ public class TemporaryResultFilesHelperTest {
         Boolean hasNotKey = tempResultFilesMap.containsKey("D");
 
         //when
-        TemporaryResultFilesHelper.initTempDirectory(tempResultFilesMap, "D");
+        TemporaryResultFilesHelper.registerTempDirectory(tempResultFilesMap, "D");
 
         //then
         assertFalse(hasNotKey);
@@ -27,11 +27,11 @@ public class TemporaryResultFilesHelperTest {
     public void shouldClearTempResultMapForExampleDirectoryName() {
         //given
         Map<String, Integer> tempResultFilesMap = new LinkedHashMap<>();
-        TemporaryResultFilesHelper.initTempDirectory(tempResultFilesMap, "D");
+        TemporaryResultFilesHelper.registerTempDirectory(tempResultFilesMap, "D");
         Boolean hasKey = tempResultFilesMap.containsKey("D");
 
         //when
-        TemporaryResultFilesHelper.clearTempDirectory(tempResultFilesMap, "D");
+        TemporaryResultFilesHelper.unregisterTempDirectory(tempResultFilesMap, "D");
 
         //then
         assertTrue(hasKey);
@@ -42,7 +42,7 @@ public class TemporaryResultFilesHelperTest {
     public void shouldIncrementTempResultMapForExampleDirectoryName() {
         //given
         Map<String, Integer> tempResultFilesMap = new LinkedHashMap<>();
-        TemporaryResultFilesHelper.initTempDirectory(tempResultFilesMap, "D");
+        TemporaryResultFilesHelper.registerTempDirectory(tempResultFilesMap, "D");
         Integer initValue = tempResultFilesMap.get("D");
 
         //when
