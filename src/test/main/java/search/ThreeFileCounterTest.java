@@ -32,7 +32,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("A", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -48,7 +48,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("D", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/D", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -64,7 +64,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("C", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/C", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -80,7 +80,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("B", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/B", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -96,7 +96,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("E", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/D/E", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -112,7 +112,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("F", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/D/F", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -128,7 +128,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("I", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/D/G/I", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -144,7 +144,7 @@ public class ThreeFileCounterTest {
         //when
         Files.walkFileTree(searchFile, searcher);
         ResultFilesDTO resultFiles = searcher.getResultFiles();
-        Integer resultFromList = findFilesAmountForDirectory("G", resultFiles.getFilesAmountPerDirectoryBranch());
+        Integer resultFromList = findFilesAmountForDirectory(PATH + "A/D/G", resultFiles.getFilesAmountPerDirectoryBranch());
 
         //then
         assertEquals(expectedResult, resultFiles.getAllFilesAmount());
@@ -152,6 +152,7 @@ public class ThreeFileCounterTest {
     }
 
     private Integer findFilesAmountForDirectory(String dirName, List<DirectoryFilesAmountDTO> resultFiles) {
+        dirName = dirName.replace("/", "\\");
         for(DirectoryFilesAmountDTO dto : resultFiles) {
             if(dto.getDirectoryName().equals(dirName)) {
              return dto.getFileAmount();
