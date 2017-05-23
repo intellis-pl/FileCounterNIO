@@ -3,6 +3,7 @@ package main.java.search;
 import main.java.dto.DirectoryFilesAmountDTO;
 import main.java.dto.ResultFilesDTO;
 import main.java.helpers.FileMatcher;
+import main.java.helpers.TemporaryResultFilesManager;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -10,11 +11,7 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.Map;
-
-import static main.java.helpers.TemporaryResultFilesHelper.*;
 
 
 public class ThreeFileCounter implements FileVisitor<Path> {
@@ -23,18 +20,19 @@ public class ThreeFileCounter implements FileVisitor<Path> {
     private Integer allFilesAmount;
     private Integer currentDirFilesAmount;
     private ResultFilesDTO resultFiles;
-    private Map<String, Integer> tempResultFilesMap;
+    private TemporaryResultFilesManager temporaryResultFiles;
 
     {
         resultFiles = new ResultFilesDTO(0, new LinkedList<>());
-        tempResultFilesMap = new LinkedHashMap<>();
+        temporaryResultFiles = new TemporaryResultFilesManager();
         allFilesAmount = 0;
         currentDirFilesAmount = 0;
     }
 
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-        tempResultFilesMap = registerTempDirectory(tempResultFilesMap, dir.toString());
+        String dirName = dir.toString();
+        temporaryResultFiles.registerTempDirectory(dirName);
         resetCurrentDirFilesAmount();
         return FileVisitResult.CONTINUE;
     }
@@ -44,7 +42,7 @@ public class ThreeFileCounter implements FileVisitor<Path> {
         if (FileMatcher.isFileMatch(currentFile)) {
             incrementFilesAmount();
             saveAllFilesAmount();
-            tempResultFilesMap = updateFilesAmountForParents(tempResultFilesMap);
+            temporaryResultFiles.updateFilesAmountForParents();
         }
         return FileVisitResult.CONTINUE;
     }
@@ -59,7 +57,7 @@ public class ThreeFileCounter implements FileVisitor<Path> {
     public FileVisitResult postVisitDirectory(Path currentFile, IOException exc) throws IOException {
         String dirName = currentFile.toString();
         saveFilesAmountForCurrentDirectory(dirName);
-        tempResultFilesMap = unregisterTempDirectory(tempResultFilesMap, dirName);
+        temporaryResultFiles.unregisterTempDirectory(dirName);
         return FileVisitResult.CONTINUE;
     }
 
@@ -68,7 +66,7 @@ public class ThreeFileCounter implements FileVisitor<Path> {
     }
 
     private void saveFilesAmountForCurrentDirectory(String dirName) {
-        Integer filesInCurrDir = tempResultFilesMap.get(dirName);
+        Integer filesInCurrDir = temporaryResultFiles.findAmountForDirectory(dirName);
         resultFiles.addFilesAmountForCurrentDir(
                 new DirectoryFilesAmountDTO(dirName, filesInCurrDir)
         );
